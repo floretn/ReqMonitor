@@ -1,5 +1,6 @@
 package ru.mephi.reqsystem.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -7,6 +8,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.mephi.reqsystem.domain.administration.User;
+import ru.mephi.reqsystem.domain.requirements.Project;
+import ru.mephi.reqsystem.domain.requirements.Release;
+import ru.mephi.reqsystem.domain.requirements.Requirement;
+import ru.mephi.reqsystem.domain.requirements.Specification;
+import ru.mephi.reqsystem.service.ProjectsService;
+import ru.mephi.reqsystem.service.ReleaseService;
+import ru.mephi.reqsystem.service.RequirementService;
+import ru.mephi.reqsystem.service.SpecService;
+
+import java.util.List;
 
 /**
  * Основной контроллер, обслуживающий главную страницу приложения.
@@ -20,6 +31,20 @@ public class MainController {
     // Аннотируем методы в зависимости от их назначения. GetMapping/PostMapping/....
 
     // Начальная приветственная страница
+
+    private final ProjectsService projectsService;
+    private final SpecService specService;
+    private final ReleaseService releaseService;
+    private final RequirementService requirementService;
+
+    @Autowired
+    public MainController(ProjectsService projectsService, SpecService specService, ReleaseService releaseService, RequirementService requirementService) {
+        this.projectsService = projectsService;
+        this.specService = specService;
+        this.releaseService = releaseService;
+        this.requirementService = requirementService;
+    }
+
     @GetMapping("/")
     public String greeting(Model model) {
         return "greeting";
@@ -35,7 +60,9 @@ public class MainController {
         return "main";
     }
 
-    //Страница для работы с требованиями
+    /**
+     * Страница для работы с требованиями
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/requirements")
     public String requirements(  Model model,
@@ -43,12 +70,33 @@ public class MainController {
         return "requirements";
     }
 
+
     //Страница для работы с проектами
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/projects")
     public String projects(  Model model,
                                  @AuthenticationPrincipal User user) {
+        List<Project> projects = projectsService.showProjects();
+        model.addAttribute("projects", projects);
         return "projects";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/specs")
+    public String specs(  Model model,
+                             @AuthenticationPrincipal User user) {
+        List<Specification> specifications = specService.showSpecifications();
+        model.addAttribute("specs", specifications);
+        return "specs";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/releases")
+    public String releases(  Model model,
+                          @AuthenticationPrincipal User user) {
+        List<Release> releases = releaseService.showReleases();
+        model.addAttribute("releases", releases);
+        return "releases";
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -57,32 +105,6 @@ public class MainController {
         return "redirect:http://localhost:8080/actuator";
     };
 
-    /*@PostMapping("/main")
-    public String add(
-            @AuthenticationPrincipal User user,
-            @Valid Message message,
-            BindingResult bindingResult,
-            Model model,
-            @RequestParam("file") MultipartFile file,
-            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageble) throws IOException {
-        message.setAuthor(user);
-
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errorsMap = ControllerUtil.getErrors(bindingResult);
-            model.mergeAttributes(errorsMap);
-            model.addAttribute("message", message);
-        } else {
-            saveFile(message, file);
-        }
-
-        model.addAttribute("message", null);
-        Page<MessageDto> page = messageRepo.findAll(pageble, user);
-        model.addAttribute("page", page);
-        model.addAttribute("url", "/main");
-        Iterable<Message> messageRepoAll = messageRepo.findAll();
-        model.addAttribute("messages", messageRepoAll);
-        return "main";
-    }*/
 
     // Мб основа этой штуки понадобится потом
     /*private void saveFile(Message message, MultipartFile file) throws IOException {

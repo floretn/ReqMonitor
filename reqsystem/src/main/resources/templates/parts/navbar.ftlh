@@ -13,14 +13,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="/">Home</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/main">Messages</a>
-            </li>
-            <#if user??>
-                <li class="nav-item">
-                    <a class="nav-link" href="/user-messages/${currentUserId}">My messages</a>
-                </li>
-            </#if>
+
             <#if isAdmin>
                 <li class="nav-item">
                     <a class="nav-link" href="/user">User list</a>
@@ -34,14 +27,25 @@
                     <a class="nav-link" href="/user/profile">Profile</a>
                 </li>
             </#if>
+
             <#if user?? && name!="unknown" && name != "Guest">
                 <li class="nav-item">
-                    <a class="nav-link" href="/requirements">Requirements</a>
+                    <a class="nav-link" href="/projects">Projects</a>
                 </li>
             </#if>
             <#if user?? && name!="unknown" && name != "Guest">
                 <li class="nav-item">
-                    <a class="nav-link" href="/projects">Projects</a>
+                    <a class="nav-link" href="/specs">Specifications</a>
+                </li>
+            </#if>
+            <#if user?? && name!="unknown" && name != "Guest">
+                <li class="nav-item">
+                    <a class="nav-link" href="/releases">Releases</a>
+                </li>
+            </#if>
+            <#if user?? && name!="unknown" && name != "Guest">
+                <li class="nav-item">
+                    <a class="nav-link" href="/requirements">Requirements</a>
                 </li>
             </#if>
         </ul>
@@ -56,7 +60,7 @@
             <@l.logout/>
         <#else>
             <a href="http://localhost:8080/login" class="btn btn-primary" role="button" aria-pressed="true">
-                Sign In/Sign up
+                Sign In/Up
             </a>
         </#if>
     </div>

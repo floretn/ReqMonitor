@@ -1,9 +1,10 @@
 <#import "parts/common.ftlh" as c>
+<#import "parts/prjsShow.ftlh" as r>
 
-<!-- Главная страница сайта -->
 <@c.page>
-    <div><h1>Hello from projects page!</h1></div>
-    Список действий
-    <td><a href="/projects/add">add new project</a></td>
+    <div><h1>Projects page!</h1></div>
+    <h4><a href="/projects/add">Add new project</a></h4>
+    <h4>List projects: </h4>
+    <@r.show/>
 
 </@c.page>
